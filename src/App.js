@@ -19,6 +19,15 @@ import AdminRoute from './routes/AdminRoute'
 import ForgotPassword from './UI/ForgotPassword'
 import FullPageSpinner from './UI/FullPageSpinner'
 import Login from './UI/Login'
+import {
+  setLoggedIn,
+  setLoggedInUserId,
+  setLoggedInUsername,
+  setLoggedInRoles,
+  setLoggedInUserState,
+  logoutUser
+} from './redux/loginReducer'
+
 import Root from './UI/Root'
 
 import {
@@ -30,6 +39,7 @@ import PasswordReset from './UI/PasswordReset'
 import SessionProvider from './UI/SessionProvider'
 
 import './App.css'
+import { connect } from 'react-redux'
 
 const Frame = styled.div`
   display: flex;
@@ -41,7 +51,7 @@ const Main = styled.main`
   padding: 30px;
 `
 
-function App() {
+function App(props) {
   const defaultTheme = {
     primary_color: '#386992',
     secondary_color: '#4E556F',
@@ -56,6 +66,20 @@ function App() {
     background_primary: '#fff',
     background_secondary: '#f5f5f5',
   }
+
+  const {
+    loggedInUsername,
+    loggedIn,
+    loggedInUserState,
+  } = props.login
+  const {
+    setLoggedIn,
+    setLoggedInUserId,
+    setLoggedInUsername,
+    setLoggedInRoles,
+    setLoggedInUserState,
+    logoutUser
+  } = props
 
   const cookies = new Cookies()
 
@@ -95,11 +119,6 @@ function App() {
 
   // session states
   const [session, setSession] = useState('')
-  const [loggedInUserId, setLoggedInUserId] = useState('')
-  const [loggedInUserState, setLoggedInUserState] = useState(null)
-  const [loggedInUsername, setLoggedInUsername] = useState('')
-  const [loggedInRoles, setLoggedInRoles] = useState([])
-  const [loggedIn, setLoggedIn] = useState(false)
   const [sessionTimer, setSessionTimer] = useState(60)
 
   const [QRCodeURL, setQRCodeURL] = useState('')
@@ -161,7 +180,6 @@ function App() {
       method: 'GET',
       url: '/api/session',
     }).then((res) => {
-      console.log(res)
       if (res.status) {
         setSession(cookies.get('sessionId')) // Check for a session and then set up the session state based on what we found
 
@@ -174,7 +192,6 @@ function App() {
             setLoggedInUserState(userCookie)
             setLoggedInUserId(userCookie.id)
             setLoggedInUsername(userCookie.username)
-            console.log(userCookie.roles)
             setLoggedInRoles(userCookie.roles)
           } else setAppIsLoaded(true)
         } else setAppIsLoaded(true)
@@ -785,12 +802,7 @@ function App() {
     }
   }
 
-  function setUpUser(id, username, roles) {
-    setSession(cookies.get('sessionId'))
-    setLoggedInUserId(id)
-    setLoggedInUsername(username)
-    setLoggedInRoles(roles)
-  }
+ 
 
   // Update theme state locally
   const updateTheme = (update) => {
@@ -837,7 +849,7 @@ function App() {
   }
 
   const handleLogout = (history) => {
-    setLoggedIn(false)
+    logoutUser()
     cookies.remove('sessionId')
     cookies.remove('user')
 
@@ -921,9 +933,8 @@ function App() {
                     <Frame id="app-frame">
                       <Main>
                         <Login
-                          logo={image}
                           history={history}
-                          setUpUser={setUpUser}
+                          cookies={cookies}
                           sendRequest={sendAdminMessage}
                           setLoggedIn={setLoggedIn}
                         />
@@ -1007,5 +1018,13 @@ function App() {
     )
   }
 }
+const mapStateToProps = (state) => state
 
-export default App
+export default connect(mapStateToProps, {
+  setLoggedIn,
+  setLoggedInUserId,
+  setLoggedInUsername,
+  setLoggedInRoles,
+  setLoggedInUserState,
+  logoutUser
+})(App)
