@@ -2,8 +2,10 @@ import Axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import React, { useRef, useEffect, useState } from 'react'
 
+import { connect } from 'react-redux'
+
 import { useNotification } from './NotificationProvider'
-import { handleImageSrc } from './util'
+
 
 import {
   FormContainer,
@@ -17,6 +19,7 @@ import {
 } from './CommonStylesForms'
 
 function PasswordReset(props) {
+  const { logo } = props.login
   const token = window.location.hash.substring(1)
 
   const [id, setId] = useState(undefined)
@@ -55,21 +58,6 @@ function PasswordReset(props) {
     })
   }, [])
 
-  const [logo, setLogo] = useState(null)
-
-  useEffect(() => {
-    // Fetching the logo
-    Axios({
-      method: 'GET',
-      url: '/api/logo',
-    }).then((res) => {
-      if (res.data.error) {
-        setNotification(res.data.error, 'error')
-      } else {
-        setLogo(handleImageSrc(res.data[0].image.data))
-      }
-    })
-  }, [])
 
   // Accessing notification context
   const setNotification = useNotification()
@@ -139,4 +127,6 @@ function PasswordReset(props) {
     </FormContainer>
   )
 }
-export default PasswordReset
+const mapStateToProps = (state) => state
+
+export default connect(mapStateToProps)(PasswordReset)

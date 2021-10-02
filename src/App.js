@@ -20,6 +20,7 @@ import ForgotPassword from './UI/ForgotPassword'
 import FullPageSpinner from './UI/FullPageSpinner'
 import Login from './UI/Login'
 import {
+  setLogo,
   setLoggedIn,
   setLoggedInUserId,
   setLoggedInUsername,
@@ -27,7 +28,7 @@ import {
   setLoggedInUserState,
   logoutUser
 } from './redux/loginReducer'
-
+import { handleImageSrc } from './UI/util'
 import Root from './UI/Root'
 
 import {
@@ -73,6 +74,7 @@ function App(props) {
     loggedInUserState,
   } = props.login
   const {
+    setLogo,
     setLoggedIn,
     setLoggedInUserId,
     setLoggedInUsername,
@@ -161,6 +163,20 @@ function App(props) {
       )
     }
   }
+  //setting logo for whole app?
+  useEffect(() => {
+    // Fetching the logo
+    Axios({
+      method: 'GET',
+      url: '/api/logo',
+    }).then((res) => {
+      if (res.data.error) {
+        setNotification(res.data.error, 'error')
+      } else {
+        setLogo(handleImageSrc(res.data[0].image.data))
+      }
+    })
+  }, [])
 
   // Setting up websocket and controllerSocket
   useEffect(() => {
@@ -353,28 +369,8 @@ function App(props) {
         case 'CONTACTS':
           switch (type) {
             case 'CONTACTS':
-              // let oldContacts = contacts
-              // let newContacts = data.contacts
-              // let updatedContacts = []
-              // // (mikekebert) Loop through the new contacts and check them against the existing array
-              // newContacts.forEach((newContact) => {
-              //   oldContacts.forEach((oldContact, index) => {
-              //     if (
-              //       oldContact !== null &&
-              //       newContact !== null &&
-              //       oldContact.contact_id === newContact.contact_id
-              //     ) {
-              //       // (mikekebert) If you find a match, delete the old copy from the old array
-              //       oldContacts.splice(index, 1)
-              //     }
-              //   })
-              //   updatedContacts.push(newContact)
-              // })
-              let updatedContacts = data.contacts
 
-              // (mikekebert) When you reach the end of the list of new contacts, simply add any remaining old contacts to the new array
-              // if (oldContacts.length > 0)
-              //   updatedContacts = [...updatedContacts, ...oldContacts]
+              let updatedContacts = data.contacts
 
               // (mikekebert) Sort the array by data created, newest on top
               updatedContacts.sort((a, b) =>
@@ -802,7 +798,6 @@ function App(props) {
     }
   }
 
- 
 
   // Update theme state locally
   const updateTheme = (update) => {
@@ -896,11 +891,8 @@ function App(props) {
                     <Frame id="app-frame">
                       <Main>
                         <PasswordReset
-                          logo={image}
                           history={history}
                           sendRequest={sendAdminMessage}
-                          user={user}
-                          users={users}
                         />
                       </Main>
                     </Frame>
@@ -1021,6 +1013,7 @@ function App(props) {
 const mapStateToProps = (state) => state
 
 export default connect(mapStateToProps, {
+  setLogo,
   setLoggedIn,
   setLoggedInUserId,
   setLoggedInUsername,
