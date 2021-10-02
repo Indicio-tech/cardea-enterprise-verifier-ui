@@ -927,6 +927,7 @@ function App(props) {
                         <Login
                           history={history}
                           cookies={cookies}
+                          setSession={setSession}
                           sendRequest={sendAdminMessage}
                           setLoggedIn={setLoggedIn}
                         />
