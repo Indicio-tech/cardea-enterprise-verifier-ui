@@ -873,7 +873,6 @@ function App(props) {
                     <Frame id="app-frame">
                       <Main>
                         <ForgotPassword
-                          logo={image}
                           history={history}
                           sendRequest={sendAdminMessage}
                           user={user}
@@ -906,7 +905,6 @@ function App(props) {
                     <Frame id="app-frame">
                       <Main>
                         <AccountSetup
-                          logo={image}
                           history={history}
                           sendRequest={sendAdminMessage}
                           messageHandler={messageHandler}

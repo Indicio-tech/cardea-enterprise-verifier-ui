@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import React, { useRef, useEffect, useState } from 'react'
+import {connect} from 'react-redux'
 import jwt_decode from 'jwt-decode'
 
 import { useNotification } from './NotificationProvider'
@@ -17,6 +18,7 @@ import {
 } from './CommonStylesForms'
 
 function AccountSetup(props) {
+  const { logo } = props.login
   const token = window.location.hash.substring(1)
 
   const [id, setId] = useState({})
@@ -53,8 +55,6 @@ function AccountSetup(props) {
       }
     })
   }, [])
-
-  const [logo, setLogo] = useState(null)
 
   useEffect(() => {
     // Fetch the logo
@@ -153,5 +153,6 @@ function AccountSetup(props) {
     </FormContainer>
   )
 }
+const mapStateToProps = (state) => state
 
-export default AccountSetup
+export default connect(mapStateToProps)(AccountSetup)

@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { handleImageSrc } from './util'
-
+import {connect} from 'react-redux'
 import styled from 'styled-components'
 import { Logo, LogoHolder } from './CommonStylesForms'
 
@@ -56,7 +56,7 @@ const Logout = styled.button`
 
 function AppHeader(props) {
   const [src, setSrc] = useState(null)
-  const logo = props.logo
+  const {logo} = props.login
   const organizationName = props.organizationName
 
   useEffect(() => {
@@ -95,5 +95,5 @@ function AppHeader(props) {
     </Header>
   )
 }
-
-export default AppHeader
+const mapStateToProps = (state) => state
+export default connect(mapStateToProps)(AppHeader)
