@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import React, { useRef, useEffect, useState } from 'react'
 import {connect} from 'react-redux'
+import { setLogo } from '../redux/loginReducer'
 import jwt_decode from 'jwt-decode'
 
 import { useNotification } from './NotificationProvider'
@@ -18,6 +19,8 @@ import {
 } from './CommonStylesForms'
 
 function AccountSetup(props) {
+  const {
+    setLogo} = props
   const { logo } = props.login
   const token = window.location.hash.substring(1)
 
@@ -155,4 +158,4 @@ function AccountSetup(props) {
 }
 const mapStateToProps = (state) => state
 
-export default connect(mapStateToProps)(AccountSetup)
+export default connect(mapStateToProps, {setLogo})(AccountSetup)
